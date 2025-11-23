@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { isConfigured } from './lib/supabase';
 import {
   Login,
   Signup,
@@ -12,6 +13,7 @@ import {
   StudySessions,
   Profile,
 } from './pages';
+import { ConfigurationError } from './pages/ConfigurationError';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -24,6 +26,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+  // Check if Supabase is configured
+  if (!isConfigured) {
+    return <ConfigurationError />;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
