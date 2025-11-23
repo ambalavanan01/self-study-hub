@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { CGPAChart } from '../components/dashboard/CGPAChart';
 import { UpcomingTasks } from '../components/dashboard/UpcomingTasks';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
+import { LiveClock } from '../components/dashboard/LiveClock';
 import { Button } from '../components/ui/button';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { Link } from 'react-router-dom';
 export function Dashboard() {
     const { user } = useAuth();
     const [loading, setLoading] = useState(true);
-    const [stats] = useState({
+    const [stats, setStats] = useState({
         cgpa: 0,
         credits: 0,
     });
@@ -19,15 +20,54 @@ export function Dashboard() {
     const [schedule, setSchedule] = useState<any[]>([]);
     const [cgpaData, setCgpaData] = useState<{ semester: string; gpa: number }[]>([]);
 
+    // Grade point mapping
+    const gradePoints: Record<string, number> = {
+        'S': 10,
+        'A': 9,
+        'B': 8,
+        'C': 7,
+        'D': 6,
+        'E': 5,
+    };
+
     useEffect(() => {
         async function fetchDashboardData() {
             if (!user) return;
 
             try {
-                // Fetch Tasks
+                // Fetch all subjects to calculate CGPA and total credits
+                const { data: allSubjects } = await supabase
+                    .from('subjects')
+                    .select('*')
+                    .eq('user_id', user.id);
+
+                // Calculate total credits and CGPA
+                let totalCredits = 0;
+                let totalGradePoints = 0;
+
+                if (allSubjects && allSubjects.length > 0) {
+                    allSubjects.forEach((subject) => {
+                        if (subject.grade && subject.credit) {
+                            const credit = parseFloat(subject.credit);
+                            const gradePoint = gradePoints[subject.grade] || 0;
+                            totalCredits += credit;
+                            totalGradePoints += gradePoint * credit;
+                        }
+                    });
+                }
+
+                const cgpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+
+                setStats({
+                    cgpa: parseFloat(cgpa.toFixed(2)),
+                    credits: totalCredits,
+                });
+
+                // Fetch Tasks with user_id filter
                 const { data: tasksData } = await supabase
                     .from('tasks')
                     .select('*')
+                    .eq('user_id', user.id)
                     .eq('status', 'todo')
                     .order('due_date', { ascending: true })
                     .limit(5);
@@ -37,6 +77,7 @@ export function Dashboard() {
                 const { data: scheduleData } = await supabase
                     .from('timetable_entries')
                     .select('*')
+                    .eq('user_id', user.id)
                     .eq('day', today)
                     .order('start_time', { ascending: true });
 
@@ -44,14 +85,33 @@ export function Dashboard() {
                 const { data: semestersData } = await supabase
                     .from('semesters')
                     .select('*, subjects(*)')
+                    .eq('user_id', user.id)
                     .order('year', { ascending: true })
                     .order('term', { ascending: false });
 
-                // Calculate CGPA Data
-                const chartData = semestersData?.map(sem => ({
-                    semester: `${sem.term} ${sem.year}`,
-                    gpa: 0, // TODO: Calculate GPA
-                })) || [];
+                // Calculate GPA for each semester
+                const chartData = semestersData?.map(sem => {
+                    let semCredits = 0;
+                    let semGradePoints = 0;
+
+                    if (sem.subjects && sem.subjects.length > 0) {
+                        sem.subjects.forEach((subject: any) => {
+                            if (subject.grade && subject.credit) {
+                                const credit = parseFloat(subject.credit);
+                                const gradePoint = gradePoints[subject.grade] || 0;
+                                semCredits += credit;
+                                semGradePoints += gradePoint * credit;
+                            }
+                        });
+                    }
+
+                    const gpa = semCredits > 0 ? semGradePoints / semCredits : 0;
+
+                    return {
+                        semester: `${sem.term} ${sem.year}`,
+                        gpa: parseFloat(gpa.toFixed(2)),
+                    };
+                }) || [];
 
                 setTasks(tasksData || []);
                 setSchedule(scheduleData || []);
@@ -79,7 +139,8 @@ export function Dashboard() {
                         Welcome back, {user?.user_metadata?.name || 'Student'}
                     </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-4">
+                    <LiveClock />
                     <Link to="/tasks">
                         <Button size="sm">
                             <Plus className="mr-2 h-4 w-4" />

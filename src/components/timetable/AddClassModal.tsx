@@ -150,9 +150,32 @@ export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps
                         label="Start Time"
                         type="time"
                         value={formData.start_time}
-                        onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                        onChange={(e) => {
+                            const newStartTime = e.target.value;
+                            setFormData({
+                                ...formData,
+                                start_time: newStartTime,
+                            });
+                        }}
                         required
                     />
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">End Time</label>
+                        <div className="flex gap-2">
+                            <input
+                                type="time"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                value={calculateEndTime(formData.start_time, formData.type)}
+                                readOnly
+                            />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Duration: {formData.type === 'theory' ? '90' : '100'} minutes
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                     <Input
                         label="Credit"
                         type="number"

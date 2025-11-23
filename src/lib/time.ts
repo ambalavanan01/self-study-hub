@@ -1,4 +1,4 @@
-import { addMinutes, format, parse } from 'date-fns';
+import { addMinutes, format, parse, isWithinInterval, isBefore, isAfter } from 'date-fns';
 
 export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as const;
 export type Day = typeof DAYS[number];
@@ -40,3 +40,45 @@ export function validateTimeRange(startTime: string, endTime: string): boolean {
         start < end
     );
 }
+
+export function getCurrentTime(): string {
+    return format(new Date(), 'HH:mm');
+}
+
+export function isCurrentlyActive(startTime: string, endTime: string): boolean {
+    if (!startTime || !endTime) return false;
+
+    const now = new Date();
+    const start = parse(startTime, 'HH:mm', new Date());
+    const end = parse(endTime, 'HH:mm', new Date());
+
+    return isWithinInterval(now, { start, end });
+}
+
+export function getNextClass(classes: Array<{ start_time: string; end_time: string }>): number {
+    const now = new Date();
+
+    for (let i = 0; i < classes.length; i++) {
+        const startTime = parse(classes[i].start_time, 'HH:mm', new Date());
+        if (isAfter(startTime, now)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+export function formatTimeRange(startTime: string, endTime: string): string {
+    if (!startTime || !endTime) return '';
+    return `${startTime.slice(0, 5)} - ${endTime.slice(0, 5)}`;
+}
+
+export function getMinutesUntil(targetTime: string): number {
+    const now = new Date();
+    const target = parse(targetTime, 'HH:mm', new Date());
+
+    if (isBefore(target, now)) return 0;
+
+    return Math.floor((target.getTime() - now.getTime()) / 1000 / 60);
+}
+
