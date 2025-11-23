@@ -170,7 +170,7 @@ export function AddClassModal({ isOpen, onClose, onSuccess }: AddClassModalProps
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Duration: {formData.type === 'theory' ? '90' : '100'} minutes
+                            Duration: {formData.type === 'theory' ? '50' : '100'} minutes
                         </p>
                     </div>
                 </div>

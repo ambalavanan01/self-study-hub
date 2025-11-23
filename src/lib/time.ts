@@ -10,7 +10,7 @@ export const THEORY_SLOTS = [
 
 export const LAB_SLOTS = ['Morning', 'Evening'] as const;
 
-export const THEORY_DURATION = 90; // minutes
+export const THEORY_DURATION = 50; // minutes
 export const LAB_DURATION = 100; // minutes
 export const BREAK_DURATION = 10; // minutes
 
