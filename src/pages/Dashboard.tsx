@@ -63,14 +63,16 @@ export function Dashboard() {
                     credits: totalCredits,
                 });
 
-                // Fetch Tasks with user_id filter
-                const { data: tasksData } = await supabase
-                    .from('tasks')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .eq('status', 'todo')
-                    .order('due_date', { ascending: true })
-                    .limit(5);
+                // Fetch Tasks from localStorage
+                const storedTasks = localStorage.getItem('study_app_tasks');
+                let tasksData: any[] = [];
+                if (storedTasks) {
+                    const allTasks = JSON.parse(storedTasks);
+                    tasksData = allTasks
+                        .filter((task: any) => task.userId === user.id && task.status === 'todo')
+                        .sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+                        .slice(0, 5);
+                }
 
                 // Fetch Schedule
                 const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });

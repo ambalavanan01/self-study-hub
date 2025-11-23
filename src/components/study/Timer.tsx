@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Coffee, Brain } from 'lucide-react';
+import { Play, Pause, RotateCcw, Coffee, Brain, Settings } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { cn } from '../../lib/utils';
@@ -10,17 +10,34 @@ interface TimerProps {
     onSessionComplete: () => void;
 }
 
+const TIMER_SETTINGS_KEY = 'study_timer_settings';
+
+
 export function Timer({ onSessionComplete }: TimerProps) {
     const { user } = useAuth();
     const [timeLeft, setTimeLeft] = useState(25 * 60);
     const [isActive, setIsActive] = useState(false);
     const [mode, setMode] = useState<'focus' | 'short' | 'long'>('focus');
+    const [showSettings, setShowSettings] = useState(false);
     const timerRef = useRef<number | null>(null);
 
+    // Load custom settings from localStorage or use defaults
+    const [customSettings, setCustomSettings] = useState(() => {
+        const stored = localStorage.getItem(TIMER_SETTINGS_KEY);
+        if (stored) {
+            return JSON.parse(stored);
+        }
+        return {
+            focus: 25,
+            short: 5,
+            long: 15,
+        };
+    });
+
     const MODES = {
-        focus: { label: 'Focus', minutes: 25, icon: Brain },
-        short: { label: 'Short Break', minutes: 5, icon: Coffee },
-        long: { label: 'Long Break', minutes: 15, icon: Coffee },
+        focus: { label: 'Focus', minutes: customSettings.focus, icon: Brain },
+        short: { label: 'Short Break', minutes: customSettings.short, icon: Coffee },
+        long: { label: 'Long Break', minutes: customSettings.long, icon: Coffee },
     };
 
     useEffect(() => {
@@ -48,7 +65,7 @@ export function Timer({ onSessionComplete }: TimerProps) {
                 await supabase.from('study_sessions').insert([
                     {
                         user_id: user.id,
-                        duration: 25,
+                        duration: MODES[mode].minutes,
                         completed_at: new Date().toISOString(),
                     },
                 ]);
@@ -60,6 +77,15 @@ export function Timer({ onSessionComplete }: TimerProps) {
 
         alert(`${MODES[mode].label} session completed!`);
         resetTimer();
+    };
+
+    const handleSaveSettings = () => {
+        localStorage.setItem(TIMER_SETTINGS_KEY, JSON.stringify(customSettings));
+        setShowSettings(false);
+        // Reset timer to new duration if not active
+        if (!isActive) {
+            setTimeLeft(MODES[mode].minutes * 60);
+        }
     };
 
     const toggleTimer = () => setIsActive(!isActive);
@@ -150,7 +176,59 @@ export function Timer({ onSessionComplete }: TimerProps) {
                 <Button size="lg" variant="outline" onClick={resetTimer}>
                     <RotateCcw className="mr-2 h-4 w-4" /> Reset
                 </Button>
+                <Button size="lg" variant="outline" onClick={() => setShowSettings(!showSettings)}>
+                    <Settings className="mr-2 h-4 w-4" /> Settings
+                </Button>
             </div>
+
+            {showSettings && (
+                <div className="w-full space-y-4 border-t pt-6">
+                    <h3 className="text-lg font-semibold">Timer Settings</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Customize your timer durations (in minutes)</p>
+                    <div className="grid gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium flex items-center gap-2">
+                                <Brain className="h-4 w-4" /> Focus Duration
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="120"
+                                value={customSettings.focus}
+                                onChange={(e) => setCustomSettings({ ...customSettings, focus: parseInt(e.target.value) || 1 })}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium flex items-center gap-2">
+                                <Coffee className="h-4 w-4" /> Short Break Duration
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="60"
+                                value={customSettings.short}
+                                onChange={(e) => setCustomSettings({ ...customSettings, short: parseInt(e.target.value) || 1 })}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium flex items-center gap-2">
+                                <Coffee className="h-4 w-4" /> Long Break Duration
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="60"
+                                value={customSettings.long}
+                                onChange={(e) => setCustomSettings({ ...customSettings, long: parseInt(e.target.value) || 1 })}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                        </div>
+                    </div>
+                    <Button onClick={handleSaveSettings} className="w-full">Save Settings</Button>
+                </div>
+            )}
         </Card>
     );
 }

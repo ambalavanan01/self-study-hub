@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
 interface AddTaskModalProps {
@@ -10,6 +9,8 @@ interface AddTaskModalProps {
     onClose: () => void;
     onSuccess: () => void;
 }
+
+const TASKS_STORAGE_KEY = 'study_app_tasks';
 
 export function AddTaskModal({ isOpen, onClose, onSuccess }: AddTaskModalProps) {
     const { user } = useAuth();
@@ -22,24 +23,34 @@ export function AddTaskModal({ isOpen, onClose, onSuccess }: AddTaskModalProps) 
         due_date: '',
     });
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) return;
         setLoading(true);
 
         try {
-            const { error } = await supabase.from('tasks').insert([
-                {
-                    user_id: user.id,
-                    title: formData.title,
-                    description: formData.description,
-                    status: formData.status,
-                    priority: formData.priority,
-                    due_date: formData.due_date,
-                },
-            ]);
+            const newTask = {
+                id: crypto.randomUUID(),
+                userId: user.id,
+                title: formData.title,
+                description: formData.description,
+                status: formData.status,
+                priority: formData.priority,
+                due_date: formData.due_date,
+            };
 
-            if (error) throw error;
+            const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+            const allTasks = storedTasks ? JSON.parse(storedTasks) : [];
+            allTasks.push(newTask);
+            localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(allTasks));
+
+            setFormData({
+                title: '',
+                description: '',
+                status: 'todo',
+                priority: 'medium',
+                due_date: '',
+            });
             onSuccess();
             onClose();
         } catch (error) {

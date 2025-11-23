@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Plus, CheckCircle2, Circle, Clock, AlertCircle, Trash2 } from 'lucide-react';
 import { AddTaskModal } from '../components/tasks/AddTaskModal';
@@ -16,24 +15,31 @@ interface Task {
     due_date: string;
 }
 
+const TASKS_STORAGE_KEY = 'study_app_tasks';
+
 export function Tasks() {
     const { user } = useAuth();
     const [loading, setLoading] = useState(true);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
 
-    const fetchTasks = async () => {
+    const fetchTasks = () => {
         if (!user) return;
         try {
-            const { data, error } = await supabase
-                .from('tasks')
-                .select('*')
-                .order('due_date', { ascending: true });
-
-            if (error) throw error;
-            setTasks(data || []);
+            const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+            if (storedTasks) {
+                const allTasks = JSON.parse(storedTasks);
+                // Filter tasks for current user
+                const userTasks = allTasks.filter((task: Task & { userId: string }) => task.userId === user.id);
+                // Sort by due date
+                userTasks.sort((a: Task, b: Task) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+                setTasks(userTasks);
+            } else {
+                setTasks([]);
+            }
         } catch (error) {
             console.error('Error fetching tasks:', error);
+            setTasks([]);
         } finally {
             setLoading(false);
         }
@@ -43,25 +49,32 @@ export function Tasks() {
         fetchTasks();
     }, [user]);
 
-    const handleStatusChange = async (task: Task, newStatus: Task['status']) => {
+    const handleStatusChange = (task: Task, newStatus: Task['status']) => {
         try {
-            const { error } = await supabase
-                .from('tasks')
-                .update({ status: newStatus })
-                .eq('id', task.id);
-
-            if (error) throw error;
-            fetchTasks();
+            const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+            if (storedTasks) {
+                const allTasks = JSON.parse(storedTasks);
+                const updatedTasks = allTasks.map((t: Task) =>
+                    t.id === task.id ? { ...t, status: newStatus } : t
+                );
+                localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(updatedTasks));
+                fetchTasks();
+            }
         } catch (error) {
             console.error('Error updating task:', error);
         }
     };
 
-    const handleDeleteTask = async (id: string) => {
+    const handleDeleteTask = (id: string) => {
         if (!confirm('Are you sure you want to delete this task?')) return;
         try {
-            await supabase.from('tasks').delete().eq('id', id);
-            fetchTasks();
+            const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+            if (storedTasks) {
+                const allTasks = JSON.parse(storedTasks);
+                const updatedTasks = allTasks.filter((t: Task) => t.id !== id);
+                localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(updatedTasks));
+                fetchTasks();
+            }
         } catch (error) {
             console.error('Error deleting task:', error);
         }
