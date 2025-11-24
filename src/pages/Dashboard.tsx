@@ -6,7 +6,7 @@ import { UpcomingTasks } from '../components/dashboard/UpcomingTasks';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
 import { Button } from '../components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, BookOpen, Calendar, FileText, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Dashboard() {
@@ -134,21 +134,87 @@ export function Dashboard() {
 
     return (
         <div className="space-y-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                    <p className="text-muted-foreground">
-                        Welcome back, {user?.user_metadata?.name || 'Student'}
+                    <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                        Dashboard
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        Welcome back, <span className="font-semibold text-foreground">{user?.user_metadata?.name || 'Student'}</span>. Ready to learn?
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
                     <LiveClock />
                     <Link to="/tasks">
-                        <Button size="sm">
+                        <Button size="sm" className="shadow-lg shadow-primary/20">
                             <Plus className="mr-2 h-4 w-4" />
                             New Task
                         </Button>
                     </Link>
+                </div>
+            </div>
+
+            {/* Quick Actions & Streak */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="lg:col-span-3 grid gap-4 md:grid-cols-3">
+                    <Link to="/study-sessions" className="group">
+                        <div className="rounded-xl border bg-card p-4 hover:border-primary/50 transition-all hover:shadow-md cursor-pointer h-full">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                                    <BookOpen className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">Start Session</h3>
+                                    <p className="text-xs text-muted-foreground">Begin a new study timer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
+                    <Link to="/timetable" className="group">
+                        <div className="rounded-xl border bg-card p-4 hover:border-primary/50 transition-all hover:shadow-md cursor-pointer h-full">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
+                                    <Calendar className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">Check Schedule</h3>
+                                    <p className="text-xs text-muted-foreground">View today's classes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
+                    <Link to="/files" className="group">
+                        <div className="rounded-xl border bg-card p-4 hover:border-primary/50 transition-all hover:shadow-md cursor-pointer h-full">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
+                                    <FileText className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">Upload Files</h3>
+                                    <p className="text-xs text-muted-foreground">Manage study materials</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+
+                {/* Study Streak Widget */}
+                <div className="rounded-xl border bg-gradient-to-br from-card to-primary/5 p-4 shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                            Study Streak
+                        </h3>
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">Active</span>
+                    </div>
+                    <div className="flex items-end gap-2">
+                        <span className="text-3xl font-bold">3</span>
+                        <span className="text-sm text-muted-foreground mb-1">days</span>
+                    </div>
+                    <div className="mt-3 h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                        <div className="h-full bg-yellow-500 w-3/7 rounded-full" />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">Keep it up! 4 more days to a week.</p>
                 </div>
             </div>
 

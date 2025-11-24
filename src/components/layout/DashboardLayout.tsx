@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { Button } from '../ui/button';
+import { ThemeToggle } from '../ThemeToggle';
 
 export function DashboardLayout() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -46,6 +47,14 @@ export function DashboardLayout() {
                             <Menu className="h-5 w-5" />
                         )}
                     </Button>
+                    <ThemeToggle />
+                </header>
+
+                {/* Desktop Header */}
+                <header className="hidden lg:flex h-16 items-center justify-end border-b px-8 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
+                    <div className="flex items-center gap-4">
+                        <ThemeToggle />
+                    </div>
                 </header>
 
                 {/* Page Content */}
