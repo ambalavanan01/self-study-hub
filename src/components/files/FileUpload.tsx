@@ -64,11 +64,10 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
             const { error: dbError } = await supabase.from('files').insert([
                 {
                     user_id: user.id,
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    url: publicUrl,
-                    path: filePath,
+                    file_name: file.name,
+                    size_bytes: file.size,
+                    file_type: file.type,
+                    file_url: publicUrl,
                 },
             ]);
 

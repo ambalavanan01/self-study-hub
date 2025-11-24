@@ -15,7 +15,7 @@ export function Files() {
             const { data, error } = await supabase
                 .from('files')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('uploaded_at', { ascending: false });
 
             if (error) throw error;
             setFiles(data || []);

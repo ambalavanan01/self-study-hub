@@ -25,6 +25,15 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { session, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+  if (session) return <Navigate to="/dashboard" replace />;
+
+  return <>{children}</>;
+}
+
 function App() {
   // Check if Supabase is configured
   if (!isConfigured) {
@@ -34,10 +43,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={<PublicRoute><Navigate to="/login" replace /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+        <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
 
         <Route
           element={
