@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/modal';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
@@ -46,15 +45,23 @@ export function AddSemesterModal({ isOpen, onClose, onSuccess }: AddSemesterModa
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Add Semester">
             <form onSubmit={handleSubmit} className="space-y-4">
-                <Input
-                    label="Year"
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                    required
-                    min={2000}
-                    max={2100}
-                />
+                <div className="space-y-2">
+                    <label className="text-sm font-medium">Academic Year</label>
+                    <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        value={formData.year}
+                        onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                    >
+                        {Array.from({ length: 10 }, (_, i) => {
+                            const startYear = new Date().getFullYear() - 5 + i;
+                            return (
+                                <option key={startYear} value={startYear}>
+                                    {startYear}-{String(startYear + 1).slice(2)}
+                                </option>
+                            );
+                        })}
+                    </select>
+                </div>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Term</label>
                     <select
@@ -62,8 +69,8 @@ export function AddSemesterModal({ isOpen, onClose, onSuccess }: AddSemesterModa
                         value={formData.term}
                         onChange={(e) => setFormData({ ...formData, term: e.target.value })}
                     >
-                        <option value="Fall">Fall</option>
-                        <option value="Winter">Winter</option>
+                        <option value="Fall">Fall Semester</option>
+                        <option value="Winter">Winter Semester</option>
                     </select>
                 </div>
                 <div className="flex justify-end gap-2">
