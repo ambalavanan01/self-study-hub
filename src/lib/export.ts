@@ -70,7 +70,7 @@ export async function exportCGPA({ format, userId }: ExportOptions) {
 
 export async function exportTimetable({ format, userId }: ExportOptions) {
     const { data: entries, error } = await supabase
-        .from('timetable_entries')
+        .from('smart_timetable_entries')
         .select('*')
         .eq('user_id', userId)
         .order('day');
