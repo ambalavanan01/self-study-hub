@@ -71,13 +71,13 @@ export function Timetable() {
                 </Button>
             </div>
 
-            <div className="flex gap-2 overflow-x-auto pb-2">
+            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
                 {DAYS.map((day) => (
                     <Button
                         key={day}
                         variant={selectedDay === day ? 'primary' : 'outline'}
                         onClick={() => setSelectedDay(day)}
-                        className="whitespace-nowrap"
+                        className="whitespace-nowrap flex-shrink-0"
                     >
                         {day}
                     </Button>
@@ -91,17 +91,18 @@ export function Timetable() {
                     </div>
                 ) : (
                     filteredEntries.map((entry) => (
-                        <Card key={entry.id} className="p-4 flex items-center gap-4 hover:bg-accent/50 transition-colors">
-                            <div className="flex flex-col items-center justify-center min-w-[100px] rounded bg-secondary p-2 text-sm font-bold">
+                        <Card key={entry.id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-4 hover:bg-accent/50 transition-colors">
+                            <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center min-w-[100px] rounded bg-secondary p-2 text-sm font-bold w-full sm:w-auto">
                                 <span>{entry.start_time.slice(0, 5)}</span>
-                                <span className="h-4 w-px bg-border my-1" />
+                                <span className="hidden sm:block h-4 w-px bg-border my-1" />
+                                <span className="sm:hidden">-</span>
                                 <span>{entry.end_time.slice(0, 5)}</span>
                             </div>
 
-                            <div className="flex-1 space-y-1">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="font-semibold text-lg">{entry.subject_name}</h3>
-                                    <span className={`text-xs font-medium px-2 py-1 rounded ${entry.type === 'theory'
+                            <div className="flex-1 space-y-2">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <h3 className="font-semibold text-lg leading-tight">{entry.subject_name}</h3>
+                                    <span className={`text-xs font-medium px-2 py-1 rounded self-start sm:self-auto ${entry.type === 'theory'
                                         ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                                         : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
                                         }`}>
@@ -109,20 +110,20 @@ export function Timetable() {
                                     </span>
                                 </div>
 
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                                     <span className="flex items-center gap-1">
-                                        <MapPin className="h-4 w-4" />
+                                        <MapPin className="h-3.5 w-3.5" />
                                         {entry.subject_code}
                                     </span>
                                     {entry.slot_code && (
                                         <span className="flex items-center gap-1">
-                                            <Clock className="h-4 w-4" />
+                                            <Clock className="h-3.5 w-3.5" />
                                             Slot {entry.slot_code}
                                         </span>
                                     )}
                                     {entry.slot_label && (
                                         <span className="flex items-center gap-1">
-                                            <Clock className="h-4 w-4" />
+                                            <Clock className="h-3.5 w-3.5" />
                                             {entry.slot_label}
                                         </span>
                                     )}
@@ -132,7 +133,7 @@ export function Timetable() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-muted-foreground hover:text-destructive"
+                                className="text-muted-foreground hover:text-destructive self-end sm:self-center"
                                 onClick={() => handleDeleteEntry(entry.id)}
                             >
                                 <Trash2 className="h-4 w-4" />

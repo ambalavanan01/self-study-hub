@@ -114,8 +114,8 @@ export function CGPA() {
                                 </div>
                             </div>
 
-                            <div className="rounded-md border">
-                                <table className="w-full text-sm">
+                            <div className="rounded-md border overflow-x-auto">
+                                <table className="w-full text-sm min-w-[600px]">
                                     <thead>
                                         <tr className="border-b bg-muted/50">
                                             <th className="p-3 text-left font-medium">Subject</th>
@@ -135,11 +135,11 @@ export function CGPA() {
                                         ) : (
                                             semester.subjects.map((subject) => (
                                                 <tr key={subject.id} className="border-b last:border-0 hover:bg-muted/50">
-                                                    <td className="p-3">{subject.subject_name}</td>
-                                                    <td className="p-3">{subject.subject_code}</td>
+                                                    <td className="p-3 font-medium">{subject.subject_name}</td>
+                                                    <td className="p-3 text-muted-foreground">{subject.subject_code}</td>
                                                     <td className="p-3">{subject.credit}</td>
                                                     <td className="p-3">
-                                                        <span className={`inline-flex items-center justify-center rounded px-2 py-1 font-medium ${subject.grade === 'S' || subject.grade === 'A'
+                                                        <span className={`inline-flex items-center justify-center rounded px-2 py-1 font-medium text-xs ${subject.grade === 'S' || subject.grade === 'A'
                                                             ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                                                             : 'bg-secondary text-secondary-foreground'
                                                             }`}>
