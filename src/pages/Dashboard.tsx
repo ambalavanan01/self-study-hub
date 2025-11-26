@@ -61,7 +61,7 @@ export function Dashboard() {
                 // Fetch Schedule
                 const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
                 const { data: scheduleData } = await supabase
-                    .from('timetable_entries')
+                    .from('smart_timetable_entries')
                     .select('*')
                     .eq('user_id', user.id)
                     .eq('day', today)

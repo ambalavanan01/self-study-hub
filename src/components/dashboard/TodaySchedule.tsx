@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card } from '../ui/card';
-import { Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin, BookOpen } from 'lucide-react';
 import { isCurrentlyActive, getNextClass, getMinutesUntil } from '../../lib/time';
 
 interface ClassSession {
@@ -11,6 +11,7 @@ interface ClassSession {
     end_time: string;
     type: 'theory' | 'lab';
     slot_code?: string;
+    room_number?: string;
 }
 
 interface TodayScheduleProps {
@@ -77,9 +78,15 @@ export function TodaySchedule({ sessions }: TodayScheduleProps) {
                                     </div>
                                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                                         <span className="flex items-center gap-1">
-                                            <MapPin className="h-3 w-3" />
+                                            <BookOpen className="h-3 w-3" />
                                             {session.subject_code}
                                         </span>
+                                        {session.room_number && (
+                                            <span className="flex items-center gap-1">
+                                                <MapPin className="h-3 w-3" />
+                                                {session.room_number}
+                                            </span>
+                                        )}
                                         {session.slot_code && (
                                             <span className="flex items-center gap-1">
                                                 <Clock className="h-3 w-3" />
