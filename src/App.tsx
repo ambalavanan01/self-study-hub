@@ -10,6 +10,7 @@ import {
   Timetable,
   Files,
   Profile,
+  AI,
 } from './pages';
 import { ConfigurationError } from './pages/ConfigurationError';
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -58,6 +59,7 @@ function App() {
           <Route path="/timetable" element={<Timetable />} />
           <Route path="/files" element={<Files />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/ai" element={<AI />} />
         </Route>
       </Routes>
     </BrowserRouter>

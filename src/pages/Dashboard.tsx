@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
+import { DailyTrendsUpdate } from '../components/dashboard/DailyTrendsUpdate';
 import { Calendar, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -133,6 +134,9 @@ export function Dashboard() {
                     </Link>
                 </div>
             </div>
+
+            {/* Daily Trends Update (only visible 7:30 AM - 7:30 PM) */}
+            <DailyTrendsUpdate />
 
             {/* On Going Class Tile */}
             <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm relative overflow-hidden">

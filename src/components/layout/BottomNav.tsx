@@ -8,7 +8,8 @@ import {
     User,
     LogOut,
     Menu,
-    X
+    X,
+    Sparkles
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
@@ -39,6 +40,7 @@ export function BottomNav() {
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/cgpa', icon: GraduationCap, label: 'CGPA' },
         { to: '/timetable', icon: Calendar, label: 'Timetable' },
+        { to: '/ai', icon: Sparkles, label: 'AI' },
     ];
 
     const secondaryLinks = [
