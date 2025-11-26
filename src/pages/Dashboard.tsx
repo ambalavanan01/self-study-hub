@@ -116,7 +116,56 @@ export function Dashboard() {
                 </div>
                 <div className="flex items-center gap-4">
                     <LiveClock />
+                    <Link to="/profile">
+                        <div className="h-10 w-10 rounded-full overflow-hidden border bg-muted flex items-center justify-center hover:ring-2 hover:ring-primary transition-all">
+                            {user?.user_metadata?.avatar_url ? (
+                                <img
+                                    src={user.user_metadata.avatar_url}
+                                    alt="Profile"
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <span className="font-semibold text-sm">
+                                    {user?.user_metadata?.name?.charAt(0) || 'S'}
+                                </span>
+                            )}
+                        </div>
+                    </Link>
                 </div>
+            </div>
+
+            {/* On Going Class Tile */}
+            <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-2 opacity-10">
+                    <Calendar className="h-12 w-12" />
+                </div>
+                <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <h3 className="tracking-tight text-sm font-medium text-primary">On Going Class</h3>
+                    {ongoingClass && (
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                    )}
+                </div>
+                {ongoingClass ? (
+                    <div>
+                        <div className="text-lg font-bold truncate" title={ongoingClass.subject_name}>
+                            {ongoingClass.subject_name}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                            <span className="font-mono bg-muted px-1 rounded">{ongoingClass.subject_code}</span>
+                            {ongoingClass.room_number && <span>• {ongoingClass.room_number}</span>}
+                        </div>
+                        <div className="text-xs font-medium mt-2">
+                            {ongoingClass.start_time.slice(0, 5)} - {ongoingClass.end_time.slice(0, 5)}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col justify-center h-full min-h-[60px]">
+                        <p className="text-sm text-muted-foreground">No class currently in progress.</p>
+                    </div>
+                )}
             </div>
 
             {/* Quick Actions */}
@@ -150,7 +199,7 @@ export function Dashboard() {
             </div>
 
             {/* Stats Tiles */}
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <h3 className="tracking-tight text-sm font-medium">Current CGPA</h3>
@@ -179,39 +228,7 @@ export function Dashboard() {
                     </p>
                 </div>
 
-                {/* On Going Class Tile */}
-                <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-2 opacity-10">
-                        <Calendar className="h-12 w-12" />
-                    </div>
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="tracking-tight text-sm font-medium text-primary">On Going Class</h3>
-                        {ongoingClass && (
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                        )}
-                    </div>
-                    {ongoingClass ? (
-                        <div>
-                            <div className="text-lg font-bold truncate" title={ongoingClass.subject_name}>
-                                {ongoingClass.subject_name}
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                                <span className="font-mono bg-muted px-1 rounded">{ongoingClass.subject_code}</span>
-                                {ongoingClass.room_number && <span>• {ongoingClass.room_number}</span>}
-                            </div>
-                            <div className="text-xs font-medium mt-2">
-                                {ongoingClass.start_time.slice(0, 5)} - {ongoingClass.end_time.slice(0, 5)}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col justify-center h-full min-h-[60px]">
-                            <p className="text-sm text-muted-foreground">No class currently in progress.</p>
-                        </div>
-                    )}
-                </div>
+
             </div>
 
             {/* Schedule */}

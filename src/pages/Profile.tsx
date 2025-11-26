@@ -11,6 +11,7 @@ import { importCGPA, importTimetable, importFiles } from '../lib/import';
 export function Profile() {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
         name: user?.user_metadata?.name || '',
@@ -18,11 +19,59 @@ export function Profile() {
         password: '',
         confirmPassword: '',
     });
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.user_metadata?.avatar_url || null);
 
     // Refs for file inputs
+    const avatarInputRef = useRef<HTMLInputElement>(null);
     const cgpaInputRef = useRef<HTMLInputElement>(null);
     const timetableInputRef = useRef<HTMLInputElement>(null);
     const filesInputRef = useRef<HTMLInputElement>(null);
+
+    const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        try {
+            setUploading(true);
+            setMessage(null);
+
+            if (!event.target.files || event.target.files.length === 0) {
+                throw new Error('You must select an image to upload.');
+            }
+
+            const file = event.target.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user?.id}-${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            // Upload to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, file);
+
+            if (uploadError) {
+                throw uploadError;
+            }
+
+            // Get Public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(filePath);
+
+            // Update User Metadata
+            const { error: updateError } = await supabase.auth.updateUser({
+                data: { avatar_url: publicUrl }
+            });
+
+            if (updateError) {
+                throw updateError;
+            }
+
+            setAvatarUrl(publicUrl);
+            setMessage({ type: 'success', text: 'Profile picture updated!' });
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error.message });
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -96,6 +145,32 @@ export function Profile() {
             <Card className="p-6">
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                     <div className="space-y-4">
+                        <div className="flex flex-col items-center justify-center space-y-4 pb-6 border-b">
+                            <div className="relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
+                                <div className="h-24 w-24 rounded-full overflow-hidden border-4 border-background shadow-lg bg-muted flex items-center justify-center">
+                                    {avatarUrl ? (
+                                        <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                                    ) : (
+                                        <User className="h-12 w-12 text-muted-foreground" />
+                                    )}
+                                </div>
+                                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Upload className="h-6 w-6 text-white" />
+                                </div>
+                            </div>
+                            <input
+                                type="file"
+                                ref={avatarInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleAvatarUpload}
+                                disabled={uploading}
+                            />
+                            <p className="text-sm text-muted-foreground">
+                                {uploading ? 'Uploading...' : 'Click to upload profile picture'}
+                            </p>
+                        </div>
+
                         <h2 className="text-xl font-semibold flex items-center gap-2">
                             <User className="h-5 w-5" />
                             Personal Information
