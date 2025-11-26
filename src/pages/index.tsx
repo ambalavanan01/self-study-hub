@@ -8,6 +8,4 @@ export { Dashboard } from './Dashboard';
 export { CGPA } from './CGPA';
 export { Timetable } from './Timetable';
 export { Files } from './Files';
-export { Tasks } from './Tasks';
-export { Study as StudySessions } from './Study';
 export { Profile } from './Profile';

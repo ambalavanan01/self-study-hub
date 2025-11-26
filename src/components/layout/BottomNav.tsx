@@ -5,8 +5,6 @@ import {
     GraduationCap,
     Calendar,
     FolderOpen,
-    CheckSquare,
-    Timer,
     User,
     LogOut,
     Menu,
@@ -45,8 +43,6 @@ export function BottomNav() {
 
     const secondaryLinks = [
         { to: '/files', icon: FolderOpen, label: 'Files' },
-        { to: '/tasks', icon: CheckSquare, label: 'Tasks' },
-        { to: '/study-sessions', icon: Timer, label: 'Study' },
         { to: '/profile', icon: User, label: 'Profile' },
     ];
 

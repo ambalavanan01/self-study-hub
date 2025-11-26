@@ -95,15 +95,15 @@ export function FileList({ files, onDelete }: FileListProps) {
     }
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {files.map((file) => (
-                <Card key={file.id} className="p-4 flex items-start gap-4 group hover:border-primary/50 transition-colors">
-                    <div className="p-2 rounded bg-secondary">
+                <Card key={file.id} className="p-4 flex items-center gap-4 group hover:border-primary/50 transition-colors">
+                    <div className="p-2 rounded bg-secondary flex-shrink-0">
                         <FileIcon className="h-8 w-8 text-secondary-foreground" />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                        <h3 className="font-medium truncate" title={file.file_name}>
+                        <h3 className="font-medium truncate max-w-[150px] sm:max-w-[200px]" title={file.file_name}>
                             {file.file_name}
                         </h3>
                         <p className="text-xs text-muted-foreground">
@@ -111,7 +111,7 @@ export function FileList({ files, onDelete }: FileListProps) {
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex flex-row gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         <Button
                             variant="ghost"
                             size="sm"

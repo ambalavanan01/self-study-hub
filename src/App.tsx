@@ -9,8 +9,6 @@ import {
   CGPA,
   Timetable,
   Files,
-  Tasks,
-  StudySessions,
   Profile,
 } from './pages';
 import { ConfigurationError } from './pages/ConfigurationError';
@@ -59,8 +57,6 @@ function App() {
           <Route path="/cgpa" element={<CGPA />} />
           <Route path="/timetable" element={<Timetable />} />
           <Route path="/files" element={<Files />} />
-          <Route path="/tasks" element={<Tasks />} />
-          <Route path="/study-sessions" element={<StudySessions />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>

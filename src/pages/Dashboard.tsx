@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
-import { UpcomingTasks } from '../components/dashboard/UpcomingTasks';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
-import { Button } from '../components/ui/button';
-import { Plus, Calendar, FileText } from 'lucide-react';
+import { Calendar, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Dashboard() {
@@ -15,7 +13,6 @@ export function Dashboard() {
         cgpa: 0,
         credits: 0,
     });
-    const [tasks, setTasks] = useState<any[]>([]);
     const [schedule, setSchedule] = useState<any[]>([]);
 
     // Grade point mapping
@@ -61,17 +58,6 @@ export function Dashboard() {
                     credits: totalCredits,
                 });
 
-                // Fetch Tasks from localStorage
-                const storedTasks = localStorage.getItem('study_app_tasks');
-                let tasksData: any[] = [];
-                if (storedTasks) {
-                    const allTasks = JSON.parse(storedTasks);
-                    tasksData = allTasks
-                        .filter((task: any) => task.userId === user.id && task.status === 'todo')
-                        .sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
-                        .slice(0, 5);
-                }
-
                 // Fetch Schedule
                 const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
                 const { data: scheduleData } = await supabase
@@ -81,7 +67,6 @@ export function Dashboard() {
                     .eq('day', today)
                     .order('start_time', { ascending: true });
 
-                setTasks(tasksData || []);
                 setSchedule(scheduleData || []);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
@@ -110,12 +95,6 @@ export function Dashboard() {
                 </div>
                 <div className="flex items-center gap-4">
                     <LiveClock />
-                    <Link to="/tasks">
-                        <Button size="sm" className="shadow-lg shadow-primary/20">
-                            <Plus className="mr-2 h-4 w-4" />
-                            New Task
-                        </Button>
-                    </Link>
                 </div>
             </div>
 
@@ -150,7 +129,7 @@ export function Dashboard() {
             </div>
 
             {/* Stats Tiles */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <h3 className="tracking-tight text-sm font-medium">Current CGPA</h3>
@@ -171,15 +150,6 @@ export function Dashboard() {
                 </div>
                 <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="tracking-tight text-sm font-medium">Tasks Due</h3>
-                    </div>
-                    <div className="text-2xl font-bold">{tasks.length}</div>
-                    <p className="text-xs text-muted-foreground">
-                        Upcoming deadlines
-                    </p>
-                </div>
-                <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <h3 className="tracking-tight text-sm font-medium">Classes Today</h3>
                     </div>
                     <div className="text-2xl font-bold">{schedule.length}</div>
@@ -189,13 +159,10 @@ export function Dashboard() {
                 </div>
             </div>
 
-            {/* Schedule and Tasks */}
-            <div className="grid gap-4 md:grid-cols-2">
+            {/* Schedule */}
+            <div className="grid gap-4">
                 <div className="space-y-4">
                     <TodaySchedule sessions={schedule} />
-                </div>
-                <div className="space-y-4">
-                    <UpcomingTasks tasks={tasks} />
                 </div>
             </div>
         </div>
