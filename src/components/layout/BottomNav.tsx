@@ -40,12 +40,12 @@ export function BottomNav() {
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/cgpa', icon: GraduationCap, label: 'CGPA' },
         { to: '/timetable', icon: Calendar, label: 'Timetable' },
-        { to: '/ai', icon: Sparkles, label: 'AI' },
     ];
 
     const secondaryLinks = [
         { to: '/files', icon: FolderOpen, label: 'Files' },
         { to: '/profile', icon: User, label: 'Profile' },
+        { to: '/ai', icon: Sparkles, label: 'AI' },
     ];
 
     return (
