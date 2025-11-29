@@ -9,7 +9,8 @@ import {
     LogOut,
     Menu,
     X,
-    Sparkles
+    Sparkles,
+    ClipboardCheck
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
@@ -73,6 +74,16 @@ export function BottomNav() {
                             <span className="text-xs font-medium">{link.label}</span>
                         </NavLink>
                     ))}
+
+                    <a
+                        href="https://nikeshclasstable.netlify.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-white/5 hover:text-primary"
+                    >
+                        <ClipboardCheck className="h-6 w-6 mb-1" />
+                        <span className="text-xs font-medium">Attendance</span>
+                    </a>
 
                     <button
                         onClick={() => signOut()}
