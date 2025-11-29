@@ -17,15 +17,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const checkSessionExpiry = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                const now = new Date();
+                const today7AM = new Date(now);
+                today7AM.setHours(7, 0, 0, 0);
+
+                // Get last active timestamp from local storage
+                const lastActiveStr = localStorage.getItem('lastActiveTimestamp');
+
+                if (lastActiveStr) {
+                    const lastActive = new Date(lastActiveStr);
+
+                    // If current time is past 7 AM today
+                    if (now >= today7AM) {
+                        // If last active was before today's 7 AM, force logout
+                        if (lastActive < today7AM) {
+                            await supabase.auth.signOut();
+                            setSession(null);
+                            setUser(null);
+                            setLoading(false);
+                            localStorage.setItem('lastActiveTimestamp', now.toISOString());
+                            return;
+                        }
+                    }
+                }
+
+                // Update last active timestamp
+                localStorage.setItem('lastActiveTimestamp', now.toISOString());
+            }
+
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
-        });
+        };
+
+        checkSessionExpiry();
 
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            if (session) {
+                // Update timestamp on auth state change (login, token refresh)
+                localStorage.setItem('lastActiveTimestamp', new Date().toISOString());
+            }
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
