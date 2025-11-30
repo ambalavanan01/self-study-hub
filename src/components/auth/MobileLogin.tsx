@@ -43,7 +43,7 @@ export function MobileLogin() {
                 <div className="mb-12">
                     <h1 className="text-4xl font-bold text-white mb-2">Welcome</h1>
                     <p className="text-white/80 text-sm">
-                        Lorem ipsum dolor sit amet consectetur. Lorem id sit
+                        to Ambalavanan Self Study
                     </p>
                 </div>
 

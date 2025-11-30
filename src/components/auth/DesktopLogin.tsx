@@ -77,7 +77,7 @@ export function DesktopLogin() {
                             </svg>
                         </div>
                         <div>
-                            <h3 className="font-bold text-[#2d5a4c] text-sm leading-tight">UNIVERSITAS<br />KRISTEN<br />MARANATHA</h3>
+                            <h3 className="font-bold text-[#2d5a4c] text-sm leading-tight">Ambalavanan<br />Self study</h3>
                         </div>
                     </div>
                 </div>
@@ -142,7 +142,7 @@ export function DesktopLogin() {
                                 disabled={loading}
                                 className="w-full rounded-full bg-[#5f9ea0] py-3 text-white font-semibold shadow-lg hover:bg-[#4d8284] transition-colors disabled:opacity-50 mt-4"
                             >
-                                {loading ? 'Logging in...' : 'Login to Wifi'}
+                                {loading ? 'Logging in...' : 'Login to Website'}
                             </button>
 
                             <div className="text-center text-xs text-white/60 mt-6">
@@ -152,11 +152,6 @@ export function DesktopLogin() {
                                 </Link>
                             </div>
                         </form>
-
-                        <div className="mt-12 text-center text-[10px] text-white/30">
-                            <p>Terms and Services</p>
-                            <p className="mt-4">Have a problem? Contact us at<br />help@vstudy.edu</p>
-                        </div>
                     </div>
                 </div>
             </div>
