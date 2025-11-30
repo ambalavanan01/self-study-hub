@@ -7,6 +7,7 @@ import { Card } from '../components/ui/card';
 import { User, Lock, Download, Upload, FileJson, FileText } from 'lucide-react';
 import { exportCGPA, exportTimetable, exportFiles } from '../lib/export';
 import { importCGPA, importTimetable, importFiles } from '../lib/import';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export function Profile() {
     const { user } = useAuth();
@@ -135,11 +136,14 @@ export function Profile() {
 
     return (
         <div className="max-w-2xl mx-auto space-y-8 pb-20">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Profile & Settings</h1>
-                <p className="text-muted-foreground">
-                    Manage your account settings and preferences.
-                </p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Profile & Settings</h1>
+                    <p className="text-muted-foreground">
+                        Manage your account settings and preferences.
+                    </p>
+                </div>
+                <ThemeToggle />
             </div>
 
             <Card className="p-6">

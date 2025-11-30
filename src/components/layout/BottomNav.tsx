@@ -76,7 +76,7 @@ export function BottomNav() {
                     ))}
 
                     <a
-                        href="https://nikeshclasstable.netlify.app/"
+                        href="https://nikeshclasstable.netlify.app/attendance"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-white/5 hover:text-primary"
