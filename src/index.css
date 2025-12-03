@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    /* Premium Slate/Blue Light Theme */
-    --background: 210 40% 98%;
-    /* Slate 50 */
+    /* New Palette Theme */
+    --background: 48 100% 93%;
+    /* Cream */
     --foreground: 222.2 84% 4.9%;
     /* Slate 950 */
 
-    --card: 0 0% 100%;
+    --card: 48 100% 97%;
+    /* Light Cream */
     --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 0 0% 100%;
+    --popover: 48 100% 97%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221.2 83.2% 53.3%;
-    /* Blue 600 */
-    --primary-foreground: 210 40% 98%;
+    --primary: 220 100% 70%;
+    /* Blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    /* Slate 100 */
+    --secondary: 210 100% 80%;
+    /* Light Blue */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 210 100% 85%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 210 100% 80%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
-    /* Slate 200 */
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --ring: 220 100% 70%;
 
     --radius: 0.75rem;
   }

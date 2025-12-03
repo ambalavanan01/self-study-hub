@@ -3,8 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { TodaySchedule } from '../components/dashboard/TodaySchedule';
 import { LiveClock } from '../components/dashboard/LiveClock';
-import { DailyTrendsUpdate } from '../components/dashboard/DailyTrendsUpdate';
-import { Calendar, FileText } from 'lucide-react';
+import { Calendar, FileText, Video, PieChart, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Dashboard() {
@@ -105,20 +104,12 @@ export function Dashboard() {
     }
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                        Dashboard
-                    </h1>
-                    <p className="text-muted-foreground mt-1">
-                        Welcome back, <span className="font-semibold text-foreground">{user?.user_metadata?.name || 'Student'}</span>. Ready to learn?
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <LiveClock />
-                    <Link to="/profile">
-                        <div className="h-10 w-10 rounded-full overflow-hidden border bg-muted flex items-center justify-center hover:ring-2 hover:ring-primary transition-all">
+        <div className="space-y-8 pb-20">
+            {/* Header */}
+            <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-2">
+                    <Link to="/profile" className="mb-2">
+                        <div className="h-12 w-12 rounded-full overflow-hidden border bg-muted flex items-center justify-center hover:opacity-80 transition-opacity">
                             {user?.user_metadata?.avatar_url ? (
                                 <img
                                     src={user.user_metadata.avatar_url}
@@ -126,121 +117,101 @@ export function Dashboard() {
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <span className="font-semibold text-sm">
+                                <span className="font-semibold text-lg">
                                     {user?.user_metadata?.name?.charAt(0) || 'S'}
                                 </span>
                             )}
                         </div>
                     </Link>
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                        Hi, {user?.user_metadata?.name?.split(' ')[0] || 'Student'}!
+                    </h1>
                 </div>
+                <LiveClock />
             </div>
 
-            {/* Daily Trends Update (only visible 7:30 AM - 7:30 PM) */}
-            <DailyTrendsUpdate />
-
-            {/* On Going Class Tile */}
-            <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-2 opacity-10">
-                    <Calendar className="h-12 w-12" />
+            {/* Top Row: Quick Actions + Ongoing Class */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                {/* Quick Actions Wrapper - Takes 2 cols on desktop (1 each) */}
+                <div className="grid grid-cols-2 gap-4 lg:col-span-2">
+                    <Link to="/timetable">
+                        <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 hover:shadow-md transition-all h-full flex flex-col justify-between group">
+                            <div className="p-3 bg-secondary w-fit rounded-2xl text-primary mb-4 group-hover:scale-110 transition-transform">
+                                <Calendar className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg">Check Schedule</h3>
+                                <p className="text-sm text-muted-foreground mt-1">{schedule.length} classes today</p>
+                            </div>
+                        </div>
+                    </Link>
+                    <Link to="/files">
+                        <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 hover:shadow-md transition-all h-full flex flex-col justify-between group">
+                            <div className="p-3 bg-secondary w-fit rounded-2xl text-primary mb-4 group-hover:scale-110 transition-transform">
+                                <FileText className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg">Upload File</h3>
+                                <p className="text-sm text-muted-foreground mt-1">View your files</p>
+                            </div>
+                        </div>
+                    </Link>
                 </div>
-                <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <h3 className="tracking-tight text-sm font-medium text-primary">On Going Class</h3>
-                    {ongoingClass && (
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                        </span>
+
+                {/* Ongoing Class - Takes 2 cols on desktop */}
+                <div className="lg:col-span-2 h-full">
+                    {ongoingClass ? (
+                        <div className="rounded-3xl bg-gradient-to-br from-red-400 to-red-500 p-6 text-white shadow-lg relative overflow-hidden h-full flex flex-col justify-center">
+                            <div className="relative z-10">
+                                <div className="mb-6">
+                                    <Video className="h-8 w-8 text-white/90" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-1">Ongoing Class</h3>
+                                <p className="text-white/90 font-medium mb-2">{ongoingClass.subject_name}</p>
+                                <p className="text-white/80 text-sm">Ends at {ongoingClass.end_time.slice(0, 5)}</p>
+                            </div>
+                            {/* Decorative circles */}
+                            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+                            <div className="absolute -right-10 bottom-0 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+                        </div>
+                    ) : (
+                        <div className="rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 text-foreground shadow-sm relative overflow-hidden h-full flex flex-col justify-center">
+                            <div className="relative z-10">
+                                <div className="mb-6">
+                                    <Calendar className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-1">No Ongoing Class</h3>
+                                <p className="text-muted-foreground text-sm">Enjoy your free time!</p>
+                            </div>
+                        </div>
                     )}
                 </div>
-                {ongoingClass ? (
-                    <div>
-                        <div className="text-lg font-bold truncate" title={ongoingClass.subject_name}>
-                            {ongoingClass.subject_name}
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                            <span className="font-mono bg-muted px-1 rounded">{ongoingClass.subject_code}</span>
-                            {ongoingClass.room_number && <span>• {ongoingClass.room_number}</span>}
-                        </div>
-                        <div className="text-xs font-medium mt-2">
-                            {ongoingClass.start_time.slice(0, 5)} - {ongoingClass.end_time.slice(0, 5)}
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex flex-col justify-center h-full min-h-[60px]">
-                        <p className="text-sm text-muted-foreground">No class currently in progress.</p>
-                    </div>
-                )}
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid gap-4 md:grid-cols-2">
-                <Link to="/timetable" className="group">
-                    <div className="rounded-xl border bg-card p-4 hover:border-primary/50 transition-all hover:shadow-md cursor-pointer h-full">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
-                                <Calendar className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Check Schedule</h3>
-                                <p className="text-xs text-muted-foreground">View today's classes</p>
-                            </div>
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 flex flex-col justify-between">
+                    <div className="flex justify-between items-start mb-4">
+                        <h3 className="font-bold text-sm text-muted-foreground">Current CGPA</h3>
+                        <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-primary">
+                            <PieChart className="h-4 w-4" />
                         </div>
                     </div>
-                </Link>
-                <Link to="/files" className="group">
-                    <div className="rounded-xl border bg-card p-4 hover:border-primary/50 transition-all hover:shadow-md cursor-pointer h-full">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
-                                <FileText className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Upload Files</h3>
-                                <p className="text-xs text-muted-foreground">Manage study materials</p>
-                            </div>
+                    <div className="text-4xl font-black tracking-tighter">{stats.cgpa.toFixed(2)}</div>
+                </div>
+                <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/50 flex flex-col justify-between">
+                    <div className="flex justify-between items-start mb-4">
+                        <h3 className="font-bold text-sm text-muted-foreground">Total Credits</h3>
+                        <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-primary">
+                            <User className="h-4 w-4" />
                         </div>
                     </div>
-                </Link>
-            </div>
-
-            {/* Stats Tiles */}
-            <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="tracking-tight text-sm font-medium">Current CGPA</h3>
-                    </div>
-                    <div className="text-2xl font-bold">{stats.cgpa.toFixed(2)}</div>
-                    <p className="text-xs text-muted-foreground">
-                        Cumulative Grade Point Average
-                    </p>
-                </div>
-                <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="tracking-tight text-sm font-medium">Total Credits</h3>
-                    </div>
-                    <div className="text-2xl font-bold">{stats.credits}</div>
-                    <p className="text-xs text-muted-foreground">
-                        Credits completed
-                    </p>
-                </div>
-                <div className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="tracking-tight text-sm font-medium">Classes Today</h3>
-                    </div>
-                    <div className="text-2xl font-bold">{schedule.length}</div>
-                    <p className="text-xs text-muted-foreground">
-                        Sessions scheduled
-                    </p>
-                </div>
-
-
-            </div>
-
-            {/* Schedule */}
-            <div className="grid gap-4">
-                <div className="space-y-4">
-                    <TodaySchedule sessions={schedule} />
+                    <div className="text-4xl font-black tracking-tighter">{stats.credits}</div>
                 </div>
             </div>
+
+            {/* Schedule List */}
+            <TodaySchedule sessions={schedule} />
         </div>
     );
 }

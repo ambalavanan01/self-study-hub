@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Clock as ClockIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
 export function LiveClock() {
@@ -14,12 +13,9 @@ export function LiveClock() {
     }, []);
 
     return (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <ClockIcon className="h-4 w-4" />
-            <div className="flex flex-col">
-                <span className="font-medium">{format(currentTime, 'EEEE')}</span>
-                <span className="text-xs">{format(currentTime, 'h:mm:ss a')}</span>
-            </div>
+        <div className="flex flex-col items-end">
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">{format(currentTime, 'h:mm a')}</h2>
+            <p className="text-xs font-medium text-muted-foreground">{format(currentTime, 'EEEE, MMMM d')}</p>
         </div>
     );
 }

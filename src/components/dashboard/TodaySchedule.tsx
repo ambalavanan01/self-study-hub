@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card } from '../ui/card';
-import { Clock, MapPin, BookOpen } from 'lucide-react';
-import { isCurrentlyActive, getNextClass, getMinutesUntil } from '../../lib/time';
+import { BookOpen, ChevronRight } from 'lucide-react';
+import { isCurrentlyActive } from '../../lib/time';
+import { format } from 'date-fns';
 
 interface ClassSession {
     id: string;
@@ -30,81 +30,52 @@ export function TodaySchedule({ sessions }: TodayScheduleProps) {
         return () => clearInterval(interval);
     }, []);
 
-    const nextClassIndex = getNextClass(sessions);
-
     return (
-        <Card className="p-6">
-            <h3 className="mb-4 text-lg font-semibold">Today's Schedule</h3>
-            <div className="space-y-4">
+        <div className="space-y-4">
+            <h3 className="text-xl font-bold tracking-tight">Today's Schedule</h3>
+            <div className="space-y-3">
                 {sessions.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No classes today</p>
+                    <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
+                        No classes scheduled for today
+                    </div>
                 ) : (
-                    sessions.map((session, index) => {
+                    sessions.map((session) => {
                         const isActive = isCurrentlyActive(session.start_time, session.end_time);
-                        const isNext = index === nextClassIndex;
-                        const minutesUntil = getMinutesUntil(session.start_time);
 
                         return (
                             <div
                                 key={session.id}
-                                className={`relative flex items-start gap-4 rounded-lg border p-3 transition-all ${isActive
-                                    ? 'bg-accent/50 border-primary shadow-md ring-2 ring-primary/20'
-                                    : 'hover:bg-accent/50'
-                                    }`}
+                                className="flex items-center justify-between rounded-2xl bg-card p-4 shadow-sm border border-border/50 hover:shadow-md transition-all cursor-pointer group"
                             >
-                                {isActive && (
-                                    <div className="absolute -left-1 -top-1 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground animate-pulse">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-white" />
-                                        Now
+                                <div className="flex items-center gap-4">
+                                    <div className={`h-12 w-12 rounded-full flex items-center justify-center ${isActive ? 'bg-primary/10 text-primary' : 'bg-secondary text-primary'
+                                        }`}>
+                                        {session.type === 'lab' ? (
+                                            <BookOpen className="h-6 w-6" />
+                                        ) : (
+                                            <BookOpen className="h-6 w-6" />
+                                        )}
                                     </div>
-                                )}
-                                {isNext && !isActive && (
-                                    <div className="absolute -left-1 -top-1 flex items-center gap-1 rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
-                                        Next
-                                    </div>
-                                )}
-                                <div className={`flex flex-col items-center justify-center rounded px-2 py-1 text-xs font-bold ${isActive ? 'bg-primary text-primary-foreground' : 'bg-secondary'
-                                    }`}>
-                                    <span>{session.start_time.slice(0, 5)}</span>
-                                    <span className="h-3 w-px bg-border my-0.5" />
-                                    <span>{session.end_time.slice(0, 5)}</span>
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                    <div className="flex items-center justify-between">
-                                        <p className="font-medium leading-none">{session.subject_name}</p>
-                                        <span className="text-xs font-medium text-muted-foreground">
-                                            {session.type === 'theory' ? 'Theory' : 'Lab'}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                        <span className="flex items-center gap-1">
-                                            <BookOpen className="h-3 w-3" />
-                                            {session.subject_code}
-                                        </span>
+                                    <div>
+                                        <h4 className="font-bold text-base">{session.subject_name}</h4>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
+                                            <span>{format(new Date(`2000-01-01T${session.start_time}`), 'hh:mm a')} - {format(new Date(`2000-01-01T${session.end_time}`), 'hh:mm a')}</span>
+                                        </div>
                                         {session.room_number && (
-                                            <span className="flex items-center gap-1">
-                                                <MapPin className="h-3 w-3" />
+                                            <div className="text-xs text-muted-foreground mt-0.5">
                                                 {session.room_number}
-                                            </span>
-                                        )}
-                                        {session.slot_code && (
-                                            <span className="flex items-center gap-1">
-                                                <Clock className="h-3 w-3" />
-                                                Slot {session.slot_code}
-                                            </span>
-                                        )}
-                                        {isNext && minutesUntil > 0 && (
-                                            <span className="text-blue-600 dark:text-blue-400 font-medium">
-                                                in {minutesUntil} min
-                                            </span>
+                                            </div>
                                         )}
                                     </div>
+                                </div>
+                                <div className="text-muted-foreground group-hover:text-primary transition-colors">
+                                    <ChevronRight className="h-5 w-5" />
                                 </div>
                             </div>
                         );
                     })
                 )}
             </div>
-        </Card>
+        </div>
     );
 }
