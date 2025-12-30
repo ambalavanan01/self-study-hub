@@ -11,6 +11,7 @@ import {
   Files,
   Profile,
   AI,
+  UpdatePassword,
 } from './pages';
 import { ConfigurationError } from './pages/ConfigurationError';
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -46,6 +47,7 @@ function App() {
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
         <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+        <Route path="/update-password" element={<ProtectedRoute><UpdatePassword /></ProtectedRoute>} />
 
         <Route
           element={

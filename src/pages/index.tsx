@@ -9,3 +9,4 @@ export { Timetable } from './Timetable';
 export { Files } from './Files';
 export { Profile } from './Profile';
 export { AI } from './AI';
+export { UpdatePassword } from './UpdatePassword';
